@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cow Estrus Cycle Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Cow Estrus Cycle Tracker</h1>
+
+    <!-- Fetch Cow Data -->
+    <section>
+        <h2>View Cow Data</h2>
+        <label for="cowId">Enter Cow ID:</label>
+        <input type="text" id="cowId" placeholder="Cow ID">
+        <button onclick="fetchCowData()">Get Data</button>
+        <div id="cowOutput"></div>
+    </section>
+
+    <!-- Update Cow Data -->
+    <section>
+        <h2>Add/Update Cow Data</h2>
+        <label for="newCowId">Cow ID:</label>
+        <input type="text" id="newCowId" placeholder="Cow ID">
+
+        <label for="lastEstrusDate">Last Estrus Date:</label>
+        <input type="date" id="lastEstrusDate">
+
+        <label for="cycleLength">Cycle Length (days):</label>
+        <input type="number" id="cycleLength" placeholder="Cycle Length (days)">
+
+        <button onclick="updateCowData()">Submit</button>
+        <p id="updateOutput"></p>
+    </section>
+    <!-- Visualization Section -->
+    <div class="card p-3 my-3">
+         <h2>Estrus Cycle Visualization</h2>
+         <canvas id="estrusChart" width="400" height="200"></canvas>
+         <button onclick="fetchAndShowChart()" class="btn btn-info mt-3">View Chart</button>
+    </div>
+
+    <script>
+        async function fetchCowData() {
+            const cowId = document.getElementById('cowId').value;
+            const response = await fetch(`/get-cow-data/${cowId}`);
+            const data = await response.json();
+            const output = document.getElementById('cowOutput');
+
+            if (data.error) {
+                output.innerHTML = `<p style="color:red;">${data.error}</p>`;
+            } else {
+                output.innerHTML = `
+                    <p><strong>Cow ID:</strong> ${data.cow_id}</p>
+                    <p><strong>Last Estrus Date:</strong> ${data.last_estrus_date}</p>
+                    <p><strong>Next Predicted Estrus Date:</strong> ${data.next_estrus_date}</p>
+                `;
+            }
+        }
+
+        async function updateCowData() {
+            const cowId = document.getElementById('newCowId').value;
+            const lastEstrusDate = document.getElementById('lastEstrusDate').value;
+            const cycleLength = document.getElementById('cycleLength').value;
+
+            const response = await fetch('/update-cow-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cow_id: cowId,
+                    last_estrus_date: lastEstrusDate,
+                    cycle_length_days: cycleLength || 21
+                })
+            });
+
+            const data = await response.json();
+            document.getElementById('updateOutput').innerText = data.message || data.error;
+        }
+    </script>
+<script>
+    async function fetchAndShowChart() {
+        // Prompt user for a Cow ID
+        const cowId = prompt("Enter Cow ID to visualize data:");
+        if (!cowId) {
+            alert("Cow ID is required!");
+            return;
+        }
+
+        // Fetch data from the server
+        const response = await fetch(`/get-cow-data/${cowId}`);
+        const data = await response.json();
+
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        // Prepare data for the chart
+        const labels = [];
+        const values = [];
+        let currentDate = new Date(data.last_estrus_date);
+        const cycleLength = data.cycle_length_days;
+
+        // Generate the next 5 predicted estrus dates
+        for (let i = 0; i < 5; i++) {
+            labels.push(currentDate.toISOString().split('T')[0]); // Add date as label
+            values.push(1); // Just to plot a point
+            currentDate.setDate(currentDate.getDate() + cycleLength);
+        }
+
+        // Render the chart
+        const ctx = document.getElementById('estrusChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Predicted Estrus Dates',
+                    data: values,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    y: { display: false }, // Hides Y-axis as it's not needed
+                    x: { title: { display: true, text: "Dates" } }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

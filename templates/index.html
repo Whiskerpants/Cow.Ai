@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HerdCycle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        /* Logo at the top */
+        .header {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .logo {
+            height: 100px; /* Increased logo size */
+        }
+
+        /* Background Section */
+        .hero-section {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: url('{{ url_for('static', filename='background.jpeg') }}') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+        }
+
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            text-decoration: none;
+            background-color: #3ab284;
+            color: white;
+            border-radius: 5px;
+            font-size: 1.2em;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: #2e8b6d;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+
+        .section {
+            padding: 40px 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .signup {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo at the Top -->
+    <header class="header">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="HerdCycle Logo" class="logo">
+    </header>
+
+    <!-- Hero Section with Bigger Background -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Cattle Monitoring System</h1>
+            <p>Designed to capture real-time temperature, behavioral data for optimizing breeding decisions, increasing productivity, and reducing labor costs. Innovation that's cost-effective. Built by farmers, for farmers.</p>
+            <div>
+                <a href="{{ url_for('signup') }}" class="btn">Sign Up</a>
+                <a href="{{ url_for('login') }}" class="btn">Log In</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="section" id="how-it-works">
+            <h2>How HerdCycle Works</h2>
+            <div class="step">
+                <p><strong>Step 1:</strong> Install HerdCycle Sensors</p>
+            </div>
+            <div class="step">
+                <p><strong>Step 2:</strong> Sensors analyze estrus cycles in Real-Time</p>
+            </div>
+            <div class="step">
+                <p><strong>Step 3:</strong> Receive Alerts & Insights</p>
+            </div>
+            </div>
+        </div>
+
+        <div class="section signup" id="beta-signup">
+            <h2>Be the First to Try HerdCycle</h2>
+            <p>Join our beta program and get exclusive early access!</p>
+            <input type="email" placeholder="Enter your email">
+            <button>Sign Up for Early Access</button>
+            <p>Limited beta spots available—sign up now!</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let sections = document.querySelectorAll(".section, .signup");
+            let observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

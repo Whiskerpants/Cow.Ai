@@ -1,0 +1,13 @@
+<h1>Welcome, {{ current_user.operation_name }}</h1>
+<p>Select a service:</p>
+<ul>
+    <li><a href="{{ url_for('hdp') }}">H.D.P. (Heat Detection Program)</a></li>
+    <li><a href="{{ url_for('bookkeeping_dashboard') }}">F.R.O. (Financial Reports of Operations)</a></li>
+</ul>
+<a href="{{ url_for('logout') }}">Logout</a>
+<nav>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('signup') }}">Sign Up</a>
+    <a href="{{ url_for('login') }}">Log In</a>
+    <a href="{{ url_for('service_selection') }}">Services</a>
+</nav>

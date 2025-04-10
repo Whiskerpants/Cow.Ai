@@ -1,0 +1,84 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f9;
+}
+h1, h2 {
+    color: #4CAF50;
+}
+
+/* Sections */
+section {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+/* Inputs and Buttons */
+input, button {
+    margin: 5px;
+    padding: 8px;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 300px;
+    display: block;
+}
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #45a049;
+}
+
+/* Paragraphs */
+p {
+    margin: 5px 0;
+}
+
+/* Navigation Bar */
+nav {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    section {
+        padding: 10px;
+    }
+    input, button {
+        font-size: 0.9rem;
+        padding: 6px;
+        width: 100%;
+    }
+    nav a {
+        font-size: 1rem;
+    }
+}

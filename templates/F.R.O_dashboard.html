@@ -1,0 +1,52 @@
+<h1>Farm Bookkeeping Dashboard</h1>
+<p>Total Income: ${{ total_income }}</p>
+<p>Total Expenses: ${{ total_expense }}</p>
+<canvas id="incomeChart" width="400" height="200"></canvas>
+<canvas id="expenseChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+
+const incomeData = {
+    labels: {{ incomes|map(attribute='date')|list|tojson }},
+    datasets: [{
+        label: 'Income',
+        data: {{ incomes|map(attribute='amount')|list|tojson }},
+        borderWidth: 1,
+        backgroundColor: 'rgba(75, 192, 192, 0.5)'
+    }]
+};
+
+const expenseData = {
+    labels: {{ expenses|map(attribute='date')|list|tojson }},
+    datasets: [{
+        label: 'Expenses',
+        data: {{ expenses|map(attribute='amount')|list|tojson }},
+        borderWidth: 1,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+    }]
+};
+
+new Chart(incomeCtx, { type: 'bar', data: incomeData });
+new Chart(expenseCtx, { type: 'bar', data: expenseData });
+</script>
+<p><strong>Profit: ${{ profit }}</strong></p>
+
+<a href="/add_income">➕ Add Income</a> |
+<a href="/add_expense">➕ Add Expense</a>
+
+<h2>Income Records</h2>
+<ul>
+  {% for income in incomes %}
+    <li>{{ income.date }} - {{ income.source }} - ${{ income.amount }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Expense Records</h2>
+<ul>
+  {% for expense in expenses %}
+    <li>{{ expense.date }} - {{ expense.category }} - ${{ expense.amount }}</li>
+  {% endfor %}
+</ul>

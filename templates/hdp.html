@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HerdCycle - Estrus Cycle Tracker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Split Screen Layout */
+        .split-container {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .left-section, .right-section {
+            width: 48%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #3ab284;
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #3ab284;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #2f9468;
+        }
+
+        /* Individual Cow Metrics */
+        #cowMetrics {
+            display: none; /* Hidden initially */
+            text-align: left;
+        }
+
+        /* Table Styling */
+        table {
+            width: 90%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3ab284;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .estrus-in-heat {
+            color: red;
+            font-weight: bold;
+        }
+
+        .estrus-not-in-heat {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>HerdCycle Estrus AI Tracker</h1>
+    <p>Monitor your herds reproductive health in real-time!</p>
+     <a href="{{ url_for('service_selection') }}">Back to Service Selection</a>
+
+    <div class="split-container">
+        <!-- Left Side: Add Cow Form -->
+        <section class="left-section">
+            <h2>Add New Cow</h2>
+            <div class="form-group">
+                <label for="addCowId">Cow ID:</label>
+                <input type="text" id="addCowId" placeholder="Enter Cow ID" required>
+            </div>
+            <div class="form-group">
+                <label for="addLastEstrusDate">Last Estrus Date:</label>
+                <input type="date" id="addLastEstrusDate" required>
+            </div>
+            <div class="form-group">
+                <label for="addCycleLength">Cycle Length (days):</label>
+                <input type="number" id="addCycleLength" placeholder="Enter Cycle Length" required>
+            </div>
+            <div class="form-group">
+                <label for="addCorrectPrediction">Correct Prediction?</label>
+                <select id="addCorrectPrediction">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="addSuccessfulPregnancy">Successful Pregnancy?</label>
+                <select id="addSuccessfulPregnancy">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <button class="btn" onclick="addCow()">Add Cow</button>
+        </section>
+
+        <!-- Right Side: View Individual Cow Metrics -->
+        <section class="right-section">
+            <h2>View Cow Metrics</h2>
+            <div class="form-group">
+                <label for="cowSearchId">Search Cow ID:</label>
+                <input type="text" id="cowSearchId" placeholder="Enter Cow ID">
+            </div>
+            <button class="btn" onclick="viewCowMetrics()">View Cow</button>
+
+            <div id="cowMetrics">
+                <h3>Cow ID: <span id="metricCowId"></span></h3>
+                <p><strong>Estrus Status:</strong> <span id="metricEstrusStatus"></span></p>
+                <p><strong>Last Estrus Date:</strong> <span id="metricLastEstrusDate"></span></p>
+                <p><strong>Cycle Length:</strong> <span id="metricCycleLength"></span> days</p>
+                <p><strong>Correct Prediction:</strong> <span id="metricCorrectPrediction"></span></p>
+                <p><strong>Successful Pregnancy:</strong> <span id="metricSuccessfulPregnancy"></span></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Full-width table at the bottom -->
+    <h2>All Cows Tracking List</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Estrus Status</th>
+            <th>Last Estrus Cycle</th>
+        </tr>
+        {% for cow in cows %}
+        <tr>
+            <td>{{ cow.id }}</td>
+            <td class="{% if cow.estrus_status == 'In Heat' %}estrus-in-heat{% elif cow.estrus_status == 'Not in Heat' %}estrus-not-in-heat{% endif %}">
+                {{ cow.estrus_status }}
+            </td>
+            <td>{{ cow.last_estrus_date }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        async function addCow() {
+            const cowId = document.getElementById("addCowId").value;
+            const lastEstrusDate = document.getElementById("addLastEstrusDate").value;
+            const cycleLength = document.getElementById("addCycleLength").value;
+            const correctPrediction = document.getElementById("addCorrectPrediction").value === "yes";
+            const successfulPregnancy = document.getElementById("addSuccessfulPregnancy").value === "yes";
+
+            const cowData = {
+                cow_id: cowId,
+                last_estrus_date: lastEstrusDate,
+                cycle_length_days: cycleLength || 21,
+                correct_prediction: correctPrediction,
+                successful_pregnancy: successfulPregnancy,
+            };
+
+            const response = await fetch("/add-cow", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(cowData),
+            });
+
+            const = await response.json();
+
+            if (response.ok)
+                alert("Cow added successfully!");
+            loadCows(); //refresh table after adding
+
+            else {
+                alert("Error: " + result.error);
+        }
+
+        async function viewCowMetrics() {
+            const cowId = document.getElementById("cowSearchId").value;
+            const response = await fetch(`/get-cow-data/${cowId}`);
+            const cow = await response.json();
+
+            if (cow.error) {
+                alert(cow.error);
+                return;
+            }
+
+            document.getElementById("metricCowId").innerText = cow.id;
+            document.getElementById("metricEstrusStatus").innerText = cow.estrus_status;
+            document.getElementById("metricLastEstrusDate").innerText = cow.last_estrus_date;
+            document.getElementById("metricCycleLength").innerText = cow.cycle_length_days;
+            document.getElementById("metricCorrectPrediction").innerText = cow.correct_prediction ? "Yes" : "No";
+            document.getElementById("metricSuccessfulPregnancy").innerText = cow.successful_pregnancy ? "Yes" : "No";
+
+            document.getElementById("cowMetrics").style.display = "block";
+        }
+        async function loadCows() {
+    const response = await fetch("/get-all-cows");
+    const cows = await response.json();
+
+    const tableBody = document.querySelector("table tbody");
+    tableBody.innerHTML = "";  // Clear existing table
+
+    cows.forEach(cow => {
+        const row = `
+            <tr>
+                <td>${cow.cow_id}</td>
+                <td class="${cow.estrus_status === 'In Heat' ? 'estrus-in-heat' : 'estrus-not-in-heat'}">
+                    ${cow.estrus_status || "Unknown"}
+                </td>
+                <td>${cow.last_estrus_date}</td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
+
+// Load cows when the page loads
+window.onload = loadCows;
+    </script>
+
+</body>
+</html>
