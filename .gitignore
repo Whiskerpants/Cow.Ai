@@ -93,7 +93,7 @@ wheels/
 *.egg
 MANIFEST
 
-# Static files (if generated)
+# static files (if generated)
 static/uploads/
 media/
 uploads/
