@@ -1,0 +1,24 @@
+databases:
+  - name: herdcycle-db
+    databaseName: herdcycle
+    user: herdcycle
+    plan: free
+
+services:
+  - type: web
+    name: herdcycle
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: herdcycle-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production

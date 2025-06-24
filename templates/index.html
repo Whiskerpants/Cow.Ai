@@ -4,16 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HerdCycle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
+            font-family: Arial, sans-serif;
+            scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-            scroll-behavior: smooth;
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        main {
+            flex: 1; /* Takes up available space, pushing footer down */
+        }
+
+        .section {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Logo at the top */
@@ -24,10 +39,12 @@
             transform: translateX(-50%);
             text-align: center;
             z-index: 1000;
+            padding: 5px;
         }
 
         .logo {
-            height: 100px; /* Increased logo size */
+            height: 80px;
+            padding: 5px;
         }
 
         /* Background Section */
@@ -63,17 +80,6 @@
             padding: 20px;
         }
 
-        h1 {
-            font-size: 4em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 1.4em;
-            margin-bottom: 20px;
-        }
-
         .btn {
             display: inline-block;
             padding: 15px 30px;
@@ -92,32 +98,98 @@
             background-color: #2e8b6d;
         }
 
-        .container {
-            width: 80%;
-            margin: auto;
-            text-align: center;
+        .feature-box {
+            background-color: #f0fdf4;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .section {
-            padding: 40px 20px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
+        /* Testimonial section fixes */
+        .testimonial {
+            background-color: #f9fafb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .signup {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        .testimonial-content {
+            font-style: italic;
+            color: #4b5563;
+            word-wrap: break-word; /* Ensures text wraps properly */
+            overflow-wrap: break-word;
+            max-width: 100%; /* Constrains text within container */
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .author-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            background-color: #d1d5db;
+            margin-right: 1rem;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .author-location {
+            color: #6b7280;
+        }
+
+        .pricing-tier {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .pricing-tier:hover {
+            transform: translateY(-5px);
+        }
+
+        .pricing-tier.popular {
+            border: 2px solid #3ab284;
+            position: relative;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3ab284;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Footer styling */
+        footer {
+            margin-top: auto; /* Push footer to bottom */
+            width: 100%;
         }
     </style>
 </head>
@@ -127,45 +199,513 @@
         <img src="{{ url_for('static', filename='logo.png') }}" alt="HerdCycle Logo" class="logo">
     </header>
 
-    <!-- Hero Section with Bigger Background -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>Cattle Monitoring System</h1>
-            <p>Designed to capture real-time temperature, behavioral data for optimizing breeding decisions, increasing productivity, and reducing labor costs. Innovation that's cost-effective. Built by farmers, for farmers.</p>
-            <div>
-                <a href="{{ url_for('signup') }}" class="btn">Sign Up</a>
-                <a href="{{ url_for('login') }}" class="btn">Log In</a>
+    <main>
+        <!-- Hero Section with Background -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="text-5xl font-bold mb-4">Cattle Management Software</h1>
+                <p class="text-xl mb-8">
+                    Farm Management Software that finally solves ranchers' #1 profit leak - reproductive data tracking. Born on a family ranch, Herdcycle transforms fertility rates and cuts veterinary costs with tools designed specifically for the reproductive challenges other platforms ignore.
+                </p>
+                <div>
+                    <a href="#pilot-signup" class="btn">Sign Up for our Pilot Program</a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="container">
-        <div class="section" id="how-it-works">
-            <h2>How HerdCycle Works</h2>
-            <div class="step">
-                <p><strong>Step 1:</strong> Install HerdCycle Sensors</p>
-            </div>
-            <div class="step">
-                <p><strong>Step 2:</strong> Sensors analyze estrus cycles in Real-Time</p>
-            </div>
-            <div class="step">
-                <p><strong>Step 3:</strong> Receive Alerts & Insights</p>
-            </div>
-            </div>
-        </div>
+        <div class="container mx-auto px-4 py-12">
+            <!-- What We Solve -->
+            <div class="section mb-24" id="features">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                        Solving Real Problems for Cattle Ranchers
+                    </h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+                        As a fourth-generation cattle rancher, I built HerdCycle after watching our family operation lose thousands each season to the same problem plaguing ranches nationwide: scattered, incomplete reproductive data. When a missed heat cycle or calving complication costs you $250+ per cow, tracking this data isn't just paperwork—it's the difference between profit and loss. I created the solution I desperately needed myself: the first platform focused exclusively on turning reproductive data into immediate profitability for cattle operations.
+                    </p>
+                </div>
 
-        <div class="section signup" id="beta-signup">
-            <h2>Be the First to Try HerdCycle</h2>
-            <p>Join our beta program and get exclusive early access!</p>
-            <input type="email" placeholder="Enter your email">
-            <button>Sign Up for Early Access</button>
-            <p>Limited beta spots available—sign up now!</p>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="feature-box">
+                        <div class="flex items-center mb-4">
+                            <div class="rounded-full bg-green-100 p-3 mr-4">
+                                <svg class="h-6 w-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Centralized Data</h3>
+                        </div>
+                        <p class="text-gray-600">
+                            Store all your operational bookkeeping, herd records, and health data in one secure, easy-to-access location.
+                        </p>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="flex items-center mb-4">
+                            <div class="rounded-full bg-green-100 p-3 mr-4">
+                                <svg class="h-6 w-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Actionable Insights</h3>
+                        </div>
+                        <p class="text-gray-600">
+                            Transform raw data into actionable insights for better decision-making and improved profitability.
+                        </p>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="flex items-center mb-4">
+                            <div class="rounded-full bg-green-100 p-3 mr-4">
+                                <svg class="h-6 w-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Herd Tracking</h3>
+                        </div>
+                        <p class="text-gray-600">
+                            Monitor individual animals with detailed records of ID, pregnancies, vaccine history, and lineage information.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="section mb-24 bg-gray-50 py-16" id="how-it-works">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                            How HerdCycle Works
+                        </h2>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="feature-box text-center">
+                            <div class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                                <span class="text-2xl font-bold text-green-700">1</span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Install HerdCycle Sensors</h3>
+                            <p class="mt-4 text-gray-600">
+                                Apply just like regular ear tags. No collars that stress cattle or fall off. 2-3 year battery life.
+                            </p>
+                        </div>
+
+                        <div class="feature-box text-center">
+                            <div class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                                <span class="text-2xl font-bold text-green-700">2</span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Sensors Analyze in Real-Time</h3>
+                            <p class="mt-4 text-gray-600">
+                                Tracks temperature and activity continuously. Works even with spotty rural internet using mesh networking.
+                            </p>
+                        </div>
+
+                        <div class="feature-box text-center">
+                            <div class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                                <span class="text-2xl font-bold text-green-700">3</span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900">Receive Alerts & Insights</h3>
+                            <p class="mt-4 text-gray-600">
+                                Get notifications that matter: "Cow #45 is in heat" not confusing data charts. Simple, clear, profitable.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilot Program Details -->
+<div class="section mb-24 bg-gray-50 py-16" id="pilot-program">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="pilot-box max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold mb-4">Limited Pilot Program - Only 20 Ranches</h2>
+                <p class="text-xl opacity-90">Perfect for testing on your best breeding cows or problem animals</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mt-8">
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">What You Get:</h3>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>5 smart ear tags shipped free ($700 value)</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>Full software access for 6 months</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>See real ROI data from just 5 animals</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>Installation support & training included</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>50% lifetime discount if you continue</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">What We Ask:</h3>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>Weekly 5-minute feedback survey</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>One 30-minute call after 30 days</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>Permission to share results (anonymously)</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>Install tags on 5 of your cattle</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <p class="text-xl mb-4 font-semibold">Why only 5 tags?</p>
+                <p class="opacity-90">We want you to see real results without a big commitment. Test on your most important animals and let the data speak for itself.</p>
+            </div>
         </div>
     </div>
+</div>
+
+<!-- Pilot Signup Form -->
+<div class="section mb-24" id="pilot-signup">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900">Apply for Your 5 Free Smart Tags</h2>
+            <p class="mt-4 text-lg text-gray-600">Takes 2 minutes. No credit card required.</p>
+            <div class="mt-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                    Only 15 spots remaining
+                </span>
+            </div>
+        </div>
+
+        <form action="/signup" method="post" class="mt-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        required
+                    />
+                </div>
+                <div>
+                    <label for="ranch" class="block text-sm font-medium text-gray-700">Ranch Name</label>
+                    <input
+                        type="text"
+                        name="ranch"
+                        id="ranch"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        required
+                    />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        required
+                    />
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone (for shipping)</label>
+                    <input
+                        type="tel"
+                        name="phone"
+                        id="phone"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        required
+                    />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="herd_size" class="block text-sm font-medium text-gray-700">Herd Size</label>
+                    <select
+                        name="herd_size"
+                        id="herd_size"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        required
+                    >
+                        <option value="">Select size</option>
+                        <option value="20-99">20-99 head</option>
+                        <option value="100-250">100-250 head</option>
+                        <option value="250-500">250-500 head</option>
+                        <option value="500-1000">500-1000 head</option>
+                        <option value="1000+">1000+ head</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700">State/Location</label>
+                    <input
+                        type="text"
+                        name="location"
+                        id="location"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        required
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label for="biggest_challenge" class="block text-sm font-medium text-gray-700">
+                    What's your biggest challenge with cattle management?
+                </label>
+                <select
+                    name="biggest_challenge"
+                    id="biggest_challenge"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    required
+                >
+                    <option value="">Select your main challenge</option>
+                    <option value="heat_detection">Missing heat cycles</option>
+                    <option value="health_monitoring">Late disease detection</option>
+                    <option value="record_keeping">Poor record keeping</option>
+                    <option value="identifying_non_productive">Can't identify non-productive cows</option>
+                    <option value="labor_shortage">Not enough labor to monitor properly</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="test_cows" class="block text-sm font-medium text-gray-700">
+                    Which 5 cows would you test with? (helps us understand your needs)
+                </label>
+                <textarea
+                    name="test_cows"
+                    id="test_cows"
+                    rows="3"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="Example: My best breeding cows, or cows I suspect aren't cycling properly..."
+                ></textarea>
+            </div>
+
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-800">
+                            <strong>No risk:</strong> Free tags, free shipping, no credit card. If you don't see value in 30 days, keep the tags with no obligation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button
+                    type="submit"
+                    class="w-full flex justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                    Apply for Free Pilot Program
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                We'll contact selected ranches within 48 hours.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Add this CSS to your style section if not already there -->
+<style>
+    .pilot-box {
+        background: linear-gradient(135deg, #3ab284 0%, #2e8b6d 100%);
+        color: white;
+        border-radius: 1rem;
+        padding: 3rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .check-item {
+        display: flex;
+        align-items: start;
+        margin-bottom: 1rem;
+    }
+
+    .check-icon {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        padding: 4px;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+</style>
+
+            <!-- FAQ Section -->
+            <div class="section mb-24" id="faq">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                        Frequently Asked Questions
+                    </h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        Common questions about HerdCycle and how it can help your operation.
+                    </p>
+                </div>
+
+                <div class="space-y-8 max-w-4xl mx-auto">
+                    <div class="bg-gray-50 rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-medium text-gray-900">How difficult is it to get started with HerdCycle?</h3>
+                        <p class="mt-2 text-gray-600">
+                            We've designed HerdCycle to be intuitive and easy to use, even for those who aren't tech-savvy. Our quick-start guides and import tools make it simple to get your existing data into the system. Plus, our dedicated support team is always available to help with the transition.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-medium text-gray-900">Can I use HerdCycle offline in the field?</h3>
+                        <p class="mt-2 text-gray-600">
+                            Yes! Our mobile app works offline, allowing you to record information in the field without internet connection. Once you're back in range, the data automatically syncs to your account, ensuring all your records stay up-to-date.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-medium text-gray-900">How secure is my farm data?</h3>
+                        <p class="mt-2 text-gray-600">
+                            Your data security is our top priority. HerdCycle uses bank-level encryption to protect your information, and we never share or sell your data to third parties. You maintain complete ownership and control over all your farm records.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-medium text-gray-900">Do I need special equipment to use HerdCycle?</h3>
+                        <p class="mt-2 text-gray-600">
+                            No special equipment is required. HerdCycle works with standard smartphones, tablets, and computers. However, it does integrate seamlessly with RFID readers, scales, and other ranch technology if you choose to use them for more automated data collection.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Product</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li><a href="#features" class="text-base text-gray-300 hover:text-white">Features</a></li>
+                        <li><a href="#pricing" class="text-base text-gray-300 hover:text-white">Pricing</a></li>
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Demo</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Support</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Documentation</a></li>
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Company</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">About</a></li>
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Blog</a></li>
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Legal</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Privacy</a></li>
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Terms</a></li>
+                        <li><a href="#" class="text-base text-gray-300 hover:text-white">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between">
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-gray-300">
+                        <span class="sr-only">Facebook</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-300">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-300">
+                        <span class="sr-only">Instagram</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.067-.06-1.407-.06-4.123v-.08c0-2.643.012-2.987.06-4.043.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465 1.067-.048 1.407-.06 4.123-.06h.08c2.643 0 2.987.012 4.043.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.067-.06-1.407-.06-4.123v-.08c0-2.643.012-2.987.06-4.043.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465C9.957 2.013 10.3 2 12.953 2h.094z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+                <p class="mt-8 md:mt-0 text-base text-gray-400">
+                    &copy; 2025 HerdCycle. All rights reserved. Built by farmers, for farmers.
+                </p>
+            </div>
+        </div>
+    </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            let sections = document.querySelectorAll(".section, .signup");
+            let sections = document.querySelectorAll(".section");
             let observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {

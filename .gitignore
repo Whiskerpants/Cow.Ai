@@ -1,0 +1,112 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.venv1/
+ENV/
+
+# IMPORTANT - Secret files (never commit these!)
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+ranchtech.db
+instance/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+.vs/
+
+# PyCharm specific
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
+.venv1/
+Lib/
+Scripts/
+Include/
+pip-selfcheck.json
+pyvenv.cfg
+
+# Flask specific
+instance/
+.webassets-cache
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+*.cover
+*.py,cover
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Static files (if generated)
+static/uploads/
+media/
+uploads/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# Security - Never commit these!
+*.pem
+*.key
+secrets/
+config/secrets/
