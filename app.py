@@ -298,6 +298,11 @@ def create_tables():
     """Create database tables if they don't exist"""
     with app.app_context():
         db.create_all()
+        print("Database tables created!")
+
+# Create tables when module is imported (for production)
+create_tables()
+
 
 @app.route('/')
 def index():
