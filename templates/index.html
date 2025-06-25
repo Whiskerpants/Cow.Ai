@@ -425,7 +425,7 @@
             </div>
         </div>
 
-        <form action="/signup" method="post" class="mt-8 space-y-6">
+        <form id="pilotSignupForm" action="/signup" method="post" class="mt-8 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
@@ -590,6 +590,32 @@
         margin-right: 12px;
         flex-shrink: 0;
     }
+    /* Popup animation */
+#successPopup > div {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading spinner */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
 </style>
 
             <!-- FAQ Section -->
@@ -704,20 +730,138 @@
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let sections = document.querySelectorAll(".section");
-            let observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                    }
-                });
-            }, { threshold: 0.2 });
-
-            sections.forEach(section => {
-                observer.observe(section);
+    document.addEventListener("DOMContentLoaded", function() {
+        // Existing scroll animation code
+        let sections = document.querySelectorAll(".section");
+        let observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
             });
+        }, { threshold: 0.2 });
+
+        sections.forEach(section => {
+            observer.observe(section);
         });
-    </script>
+
+        // New form submission code
+        const signupForm = document.getElementById('pilotSignupForm');
+        
+        if (signupForm) {
+            signupForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+                
+                // Disable button and show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Submitting... <svg class="inline w-4 h-4 ml-2 animate-spin" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                
+                try {
+                    const response = await fetch('/signup', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Show success popup
+                        showSuccessPopup(
+                            formData.get('name'),
+                            formData.get('ranch'),
+                            data.applicationId
+                        );
+                        
+                        // Reset form
+                        this.reset();
+                        
+                        // Scroll to top
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        // Show error message
+                        alert(data.error || 'An error occurred. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please check your connection and try again.');
+                } finally {
+                    // Re-enable button
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                }
+            });
+        }
+    });
+
+    function showSuccessPopup(name, ranch, applicationId) {
+        document.getElementById('applicantName').textContent = name;
+        document.getElementById('ranchName').textContent = ranch;
+        document.getElementById('applicationId').textContent = applicationId;
+        document.getElementById('successPopup').classList.remove('hidden');
+    }
+
+    function closeSuccessPopup() {
+        document.getElementById('successPopup').classList.add('hidden');
+    }
+
+    // Close popup when clicking outside
+    document.getElementById('successPopup').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSuccessPopup();
+        }
+    });
+</script>
+    <div id="successPopup" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full transform transition-all">
+        <div class="bg-green-600 text-white p-6 rounded-t-lg">
+            <div class="flex items-center">
+                <svg class="w-12 h-12 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <h3 class="text-2xl font-bold">Application Received!</h3>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <p class="text-lg mb-4">
+                Thank you, <span id="applicantName" class="font-semibold"></span>! 
+                We've received your application for the HerdCycle pilot program.
+            </p>
+            
+            <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                <h4 class="font-semibold mb-2">What happens next:</h4>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">✓</span>
+                        <span>You'll receive a confirmation email within 5 minutes</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">✓</span>
+                        <span>Our team will review your application within 48 hours</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">✓</span>
+                        <span>If selected, we'll ship your 5 free smart tags immediately</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <p class="text-sm">
+                    <strong>Application ID:</strong> #<span id="applicationId"></span><br>
+                    <strong>Ranch:</strong> <span id="ranchName"></span>
+                </p>
+            </div>
+            
+            <button onclick="closeSuccessPopup()" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition duration-200 font-semibold">
+                Got it, thanks!
+            </button>
+        </div>
+    </div>
+</div> 
 </body>
 </html>
