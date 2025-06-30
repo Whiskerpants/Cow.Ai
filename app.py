@@ -13,7 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///ranchtech.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', ''sqlite:///herdcycle.db'')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Email configuration
@@ -22,7 +22,7 @@ app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'noreply@ranchtech.com')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'noreply@herdcycle.com')
 
 # Initialize extensions
 db = SQLAlchemy(app)
@@ -90,7 +90,7 @@ def send_confirmation_email(application):
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #059669;">Thank you for applying, {application.name}!</h2>
 
-        <p>We've received your application for the RanchTech Smart Tags pilot program.</p>
+        <p>We've received your application for the HerdCycle Smart Tags pilot program.</p>
 
         <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Application Details:</h3>
@@ -107,8 +107,7 @@ def send_confirmation_email(application):
             <li>We'll provide setup instructions and access to our monitoring dashboard</li>
         </ol>
 
-        <p>If you have any questions, reply to this email or call us at 1-800-RANCH-TECH.</p>
-
+       <p>If you have any questions, reply to this email or contact us at herdcycle.com.</p>
         <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
             This is an automated email. Your application was submitted on {application.created_at.strftime('%B %d, %Y at %I:%M %p')}.
         </p>
@@ -116,7 +115,7 @@ def send_confirmation_email(application):
     """
 
     msg = Message(
-        subject='Application Received - RanchTech Pilot Program',
+        subject='Application Received - HerdCycle Pilot Program',
         recipients=[application.email],
         html=html_body
     )
